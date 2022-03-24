@@ -1,20 +1,37 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Home from "./Screens/Home";
+import Login from "./Screens/Login";
+import MCQ from "./Screens/MCQ";
+import Tracing from "./Screens/Tracing";
+import Train from "./Screens/Train";
+import QuizEnd from "./Screens/QuizEnd";
+import Loading from "./Screens/Loading";
+import GesturePath from "./Screens/GesturePath";
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator
+        screenOptions={{ headerShown: false }}
+        initialRouteName="Home"
+      >
+        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen
+          name="Login"
+          component={Login}
+          options={{ unmountOnBlur: true }}
+        />
+        <Stack.Screen name="MCQ" component={MCQ} />
+        <Stack.Screen name="Tracing" component={Tracing} />
+        <Stack.Screen name="Train" component={Train} />
+        <Stack.Screen name="QuizEnd" component={QuizEnd} />
+        <Stack.Screen name="Loading" component={Loading} />
+        <Stack.Screen name="GesturePath" component={GesturePath} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
