@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, StatusBar } from "react-native";
 import React, { useEffect } from "react";
 import LottieView from "lottie-react-native";
 
@@ -24,11 +24,12 @@ const Loading = (props) => {
         }}
         source={require("../assets/Animation/loading.json")}
       />
+      <StatusBar hidden />
     </View>
   );
 };
 
-export default Loading;
+export default React.memo(Loading);
 
 const styles = StyleSheet.create({
   loading: {

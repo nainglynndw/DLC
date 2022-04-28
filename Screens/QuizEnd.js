@@ -1,61 +1,67 @@
-import { StyleSheet, View, TouchableOpacity } from "react-native";
-import React from "react";
-import { StatusBar } from "expo-status-bar";
-
+import { StyleSheet, View, TouchableOpacity, Dimensions } from "react-native";
+import React, { useState } from "react";
 import LottieView from "lottie-react-native";
+const layout = Dimensions.get("window");
 
 const QuizEnd = (props) => {
-  return (
-    <View style={styles.container}>
-      <LottieView
-        autoPlay={true}
-        loop
-        style={styles.icon}
-        source={require("../assets/Animation/success.json")}
-      />
-      <View style={styles.rowContainer}>
-        <TouchableOpacity
-          onPress={() => {
-            props.navigation.reset({
-              index: 0,
-              routes: [{ name: "Home" }],
-            });
-          }}
-        >
-          <LottieView
-            autoPlay={true}
-            loop
-            style={styles.icon}
-            source={require("../assets/Animation/home.json")}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            props.navigation.navigate("Next");
-          }}
-        >
-          <LottieView
-            autoPlay={true}
-            loop
-            style={styles.icon}
-            source={require("../assets/Animation/forward.json")}
-          />
-        </TouchableOpacity>
+  const [show, setShow] = useState(false);
+
+  setTimeout(() => {
+    setShow(true);
+  }, 2670);
+
+  {
+    return show ? (
+      <View style={styles.container}>
+        <LottieView
+          autoPlay={true}
+          loop
+          style={styles.icon}
+          source={require("../assets/Animation/success.json")}
+        />
+        <View style={styles.rowContainer}>
+          <TouchableOpacity onPress={props.onPressHome}>
+            <LottieView
+              autoPlay={true}
+              loop
+              style={styles.icon}
+              source={require("../assets/Animation/home.json")}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={props.onPressNext}>
+            <LottieView
+              autoPlay={true}
+              loop
+              style={styles.icon}
+              source={require("../assets/Animation/forward.json")}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
-      <StatusBar hidden />
-    </View>
-  );
+    ) : (
+      <View style={styles.container}>
+        <LottieView
+          autoPlay={true}
+          loop
+          style={{ width: 120, height: 120 }}
+          source={require("../assets/Animation/star.json")}
+        />
+      </View>
+    );
+  }
 };
 
-export default QuizEnd;
+export default React.memo(QuizEnd);
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
-    width: "100%",
-    flex: 1,
+    width: layout.width,
+    height: layout.height,
     justifyContent: "center",
     alignItems: "center",
+    elevation: 8,
+    alignSelf: "center",
+    backgroundColor: "#000000cf",
   },
   rowContainer: {
     width: "100%",
@@ -64,8 +70,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   icon: {
-    width: 150,
-    height: 150,
-    backgroundColor: "#ffffff",
+    width: 120,
+    height: 120,
+    marginHorizontal: 30,
   },
 });

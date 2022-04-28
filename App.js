@@ -6,9 +6,9 @@ import Login from "./Screens/Login";
 import MCQ from "./Screens/MCQ";
 import Tracing from "./Screens/Tracing";
 import Train from "./Screens/Train";
-import QuizEnd from "./Screens/QuizEnd";
 import Loading from "./Screens/Loading";
-import GesturePath from "./Screens/GesturePath";
+import Matching from "./Screens/Matching";
+import DnD from "./Screens/DragAndDrop";
 
 const Stack = createNativeStackNavigator();
 
@@ -17,7 +17,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{ headerShown: false }}
-        initialRouteName="Home"
+        initialRouteName="Loading"
       >
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen
@@ -28,9 +28,9 @@ export default function App() {
         <Stack.Screen name="MCQ" component={MCQ} />
         <Stack.Screen name="Tracing" component={Tracing} />
         <Stack.Screen name="Train" component={Train} />
-        <Stack.Screen name="QuizEnd" component={QuizEnd} />
         <Stack.Screen name="Loading" component={Loading} />
-        <Stack.Screen name="GesturePath" component={GesturePath} />
+        <Stack.Screen name="Matching" component={Matching} />
+        <Stack.Screen name="DnD" component={DnD} />
       </Stack.Navigator>
     </NavigationContainer>
   );

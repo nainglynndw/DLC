@@ -1,45 +1,45 @@
 import {
   StyleSheet,
-  Text,
   View,
   Image,
   Dimensions,
-  Button,
   TouchableOpacity,
+  Modal,
 } from "react-native";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { StatusBar } from "expo-status-bar";
-
+import QuizEnd from "./QuizEnd";
 import { Canvas } from "@benjeau/react-native-draw";
-import { Ionicons } from "@expo/vector-icons";
-
-const d = "M 80 210 C 40 70, 240 70, 200 210   ";
+import { Ionicons, Fontisto } from "@expo/vector-icons";
 
 const Tracing = (props) => {
+  const data = props.route.params;
   const canvasRef = useRef(null);
-
   const handleUndo = () => {
     canvasRef.current?.undo();
   };
-
   const handleClear = () => {
     canvasRef.current?.clear();
   };
+
+  const width = Dimensions.get("window").width;
+  const height = Dimensions.get("window").height;
+  const [modalVisible, setModalVisible] = useState(false);
 
   return (
     <View style={styles.container}>
       <View style={styles.rowContainer}>
         <Image
-          source={require("../assets/lesson_gif/1.ka_gyi.gif")}
+          source={data.data}
           style={styles.lessonGif}
           resizeMode="contain"
           resizeMethod="scale"
         />
-        <View style={styles.card}>
+        <View style={[styles.card, { width: width, height: height }]}>
           <Canvas
             ref={canvasRef}
-            width={(Dimensions.get("window").width * 50) / 100}
-            height={(Dimensions.get("window").height * 80) / 100}
+            width={(width * 50) / 100}
+            height={(height * 80) / 100}
             color="red"
             thickness={20}
             opacity={0.6}
@@ -48,6 +48,7 @@ const Tracing = (props) => {
               elevation: 8,
             }}
           />
+
           <View
             style={[
               styles.rowContainer,
@@ -55,7 +56,7 @@ const Tracing = (props) => {
             ]}
           >
             <TouchableOpacity onPress={handleUndo}>
-              <Ionicons name="arrow-undo" size={24} color="black" />
+              <Fontisto name="eraser" size={24} color="black" />
             </TouchableOpacity>
             <TouchableOpacity onPress={handleClear}>
               <Ionicons name="trash-bin" size={24} color="darkred" />
@@ -63,10 +64,11 @@ const Tracing = (props) => {
 
             <TouchableOpacity
               onPress={() => {
-                props.navigation.reset({
-                  index: 0,
-                  routes: [{ name: "QuizEnd" }],
-                });
+                setModalVisible(true);
+                // props.navigation.reset({
+                //   index: 0,
+                //   routes: [{ name: "QuizEnd" }],
+                // });
               }}
             >
               <Ionicons
@@ -90,11 +92,34 @@ const Tracing = (props) => {
       </View>
 
       <StatusBar hidden />
+      <Modal
+        transparent
+        statusBarTranslucent
+        style={{ margin: 0, flex: 1 }}
+        visible={modalVisible}
+      >
+        <QuizEnd
+          onPressHome={() => {
+            setModalVisible(false);
+            props.navigation.reset({
+              index: 0,
+              routes: [{ name: "Home" }],
+            });
+          }}
+          onPressNext={() => {
+            setModalVisible(false);
+            // props.navigation.reset({
+            //   index: 0,
+            //   routes: [{ name: "Next" }],
+            // });
+          }}
+        />
+      </Modal>
     </View>
   );
 };
 
-export default Tracing;
+export default React.memo(Tracing);
 
 const styles = StyleSheet.create({
   container: {
@@ -120,5 +145,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     height: "100%",
     backgroundColor: "white",
+  },
+  img: {
+    width: 200,
+    height: 200,
+  },
+  imgContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    elevation: 9,
+    width: 200,
+    height: 200,
   },
 });

@@ -1,181 +1,202 @@
-import { StyleSheet, Text, View, Dimensions, BackHandler } from "react-native";
-import React, { useEffect, useState } from "react";
-import { BarCodeScanner } from "expo-barcode-scanner";
+import {
+  StyleSheet,
+  Text,
+  View,
+  StatusBar,
+  Image,
+  ScrollView,
+  Animated,
+  TouchableOpacity,
+} from "react-native";
+import React, { useRef, useState, useCallback } from "react";
+import Container from "../Style/Container";
+import Input from "../Components/Input";
 import Button from "../Components/Button";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Camera } from "expo-camera";
-import * as ImagePicker from "expo-image-picker";
-import { StatusBar } from "expo-status-bar";
+import { useFonts } from "expo-font";
+import { playSound, stopSound } from "../Music/PlayMusic";
+import { useFocusEffect } from "@react-navigation/native";
 
 const Login = (props) => {
-  const width = Dimensions.get("window").height;
-  const [hasPermission, setHasPermission] = useState(null);
-  const [scanning, setscanning] = useState(false);
+  const [loaded] = useFonts({
+    Akaya: require("../assets/Fonts/JosefinSans/FredokaOneRegular.ttf"),
+  });
+  const music = require("../assets/Music/login_theme.mp3");
+  const animation = useRef(new Animated.Value(0)).current;
+  const inputRange = [0, 1];
+  const outputRange = [0, 1];
+  const scale = animation.interpolate({ inputRange, outputRange });
 
-  useEffect(() => {
-    (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === "granted");
-    })();
-  }, []);
+  const [type, setType] = useState("student");
 
-  useEffect(() => {
-    const backAction = () => {
-      setscanning(false);
-      return true;
-    };
+  const data = [
+    { value: "teacher", img: require("../assets/images/teacher_icon.png") },
+    { value: "student", img: require("../assets/images/student_icon.png") },
+  ];
 
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
-    );
-
-    return () => backHandler.remove();
-  }, []);
-
-  const handleBarCodescanning = ({ type, data }) => {
-    setscanning(false);
-    if (data === "cbe+1647711000000")
-      return props.navigation.reset({
-        index: 0,
-        routes: [{ name: "Tracing" }],
-      });
-    return alert("Log In Failed !");
+  const showAnim = () => {
+    Animated.spring(animation, {
+      toValue: 1,
+      useNativeDriver: true,
+    }).start();
   };
 
-  if (hasPermission === null) {
-    return <Text>Requesting for camera permission</Text>;
-  }
-  if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
-  }
-
-  const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-    });
-
-    if (!result.cancelled) {
-      const scannedResult = await BarCodeScanner.scanFromURLAsync(result.uri);
-
-      if (
-        scannedResult.length > 0 &&
-        scannedResult[0].data === "cbe+1647711000000"
-      )
-        return props.navigation.reset({
-          index: 0,
-          routes: [{ name: "Tracing" }],
-        });
-      return alert("Log In Failed !");
-    }
+  const reverseAnim = () => {
+    Animated.timing(animation, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => showAnim());
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      playSound(music);
+      setTimeout(() => {
+        showAnim();
+      }, 500);
+      return () => {
+        stopSound();
+        clearTimeout();
+      };
+    }, [])
+  );
 
   return (
-    <View style={styles.container}>
-      {/* <Text style={styles.header}>Login</Text> */}
-      {scanning ? (
-        <View
-          style={{ width: "80%", height: "100%", justifyContent: "center" }}
-        >
-          <Camera
-            onBarCodeScanned={!scanning ? undefined : handleBarCodescanning}
-            style={StyleSheet.absoluteFillObject}
-          />
-          <View
-            style={{
-              alignSelf: "center",
-              width: (90 * width) / 100,
-              height: (90 * width) / 100,
-              borderWidth: 5,
-              borderStyle: "dashed",
-              borderColor: "white",
-              justifyContent: "center",
-              borderRadius: 1,
+    <View style={[styles.loginContainer, Container]}>
+      <Image
+        resizeMode="contain"
+        source={require("../assets/images/bg.jpg")}
+        style={[StyleSheet.absoluteFillObject]}
+      />
+      <View style={styles.halfContainer}>
+        <Animated.Image
+          source={require("../assets/images/dlc_logo.png")}
+          style={[
+            styles.logo,
+            {
+              transform: [
+                { scale: scale },
+                {
+                  rotate: animation.interpolate({
+                    inputRange: [0, 0.5, 1],
+                    outputRange: ["0deg", "180deg", "360deg"],
+                  }),
+                },
+              ],
+            },
+          ]}
+        />
+      </View>
+
+      <ScrollView style={{ flex: 1 }}>
+        <View style={styles.accTypeContainer}>
+          {data.map((item, index) => {
+            return (
+              <TouchableOpacity
+                style={[
+                  styles.iconContainer,
+                  {
+                    borderColor: item.value === type ? "#3bebc28f" : "white",
+                  },
+                ]}
+                key={index}
+                onPress={() => {
+                  reverseAnim();
+                  setType(item.value);
+                }}
+              >
+                <Image
+                  resizeMode="cover"
+                  resizeMethod="scale"
+                  source={item.img}
+                  style={[
+                    item.value === "teacher" ? styles.icon : styles.icon2,
+                  ]}
+                />
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+        <Input
+          placeholder={type === "student" ? "Student's ID" : "Teacher's Email"}
+          onChangeText={() => {
+            console.log("GG");
+          }}
+        />
+        <Input
+          placeholder="Password"
+          onChangeText={() => {
+            console.log("GG");
+          }}
+        />
+        <Button
+          title="Login"
+          onPress={() => {
+            props.navigation.navigate("Home");
+          }}
+        />
+        {loaded && (
+          <Text
+            style={[styles.link, { fontFamily: "Akaya" }]}
+            onPress={() => {
+              console.log("OK");
             }}
           >
-            <View
-              style={{
-                alignSelf: "center",
-                width: (50 * width) / 100,
-                height: (50 * width) / 100,
-                borderWidth: 5,
-                borderStyle: "dashed",
-                borderColor: "white",
-                justifyContent: "center",
-                borderRadius: 1,
-              }}
-            ></View>
-          </View>
-        </View>
-      ) : (
-        <>
-          <View style={styles.buttonContainer}>
-            <View
-              style={{
-                width: "80%",
-                marginBottom: -10,
-              }}
-            >
-              <Button title={"Tap to Scan"} onPress={() => setscanning(true)} />
-            </View>
-            <MaterialCommunityIcons
-              name="qrcode-scan"
-              size={44}
-              color="#5e185c"
-            />
-          </View>
-          <View style={[styles.buttonContainer, { marginBottom: 0 }]}>
-            <View
-              style={{
-                width: "80%",
-                marginBottom: -10,
-              }}
-            >
-              <Button title={"Choose File to scan"} onPress={pickImage} />
-            </View>
-            <MaterialCommunityIcons
-              name="folder-multiple-image"
-              size={44}
-              color="#5e185c"
-            />
-          </View>
-        </>
-      )}
+            Contact us
+          </Text>
+        )}
+      </ScrollView>
+
       <StatusBar hidden />
     </View>
   );
 };
 
-export default React.memo(Login);
+export default Login;
 
 const styles = StyleSheet.create({
-  container: {
+  loginContainer: {
+    justifyContent: "space-between",
+    flexDirection: "row",
+  },
+  halfContainer: {
     flex: 1,
-
-    flexDirection: "column",
+    height: "100%",
     justifyContent: "center",
     alignItems: "center",
   },
-  // header: {
-  //   fontSize: 25,
-  //   fontWeight: "bold",
-  //   color: "#5e185c",
-  //   alignSelf: "center",
-  //   position: "absolute",
-  //   top: 0,
-  //   marginTop: StatusBar.currentHeight + 20,
-  //   paddingHorizontal: 20,
-  //   paddingVertical: 10,
-  //   backgroundColor: "#5e185c5f",
-  //   borderRadius: 10,
-  // },
-  buttonContainer: {
-    width: "100%",
-    padding: 20,
+  logo: {
+    width: 200,
+    height: 200,
+  },
+  link: {
+    width: "90%",
+    textAlign: "right",
+    color: "#327da8",
+  },
+  accTypeContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    width: "90%",
+    justifyContent: "space-evenly",
     alignItems: "center",
-    marginBottom: 40,
+  },
+  icon: {
+    width: 45,
+    height: 45,
+  },
+  icon2: {
+    width: 35,
+    height: 35,
+  },
+  iconContainer: {
+    marginBottom: 10,
+    width: 50,
+    height: 50,
+    backgroundColor: "white",
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 6,
+    borderRadius: 100,
+    borderWidth: 5,
   },
 });

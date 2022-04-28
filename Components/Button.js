@@ -16,15 +16,15 @@ export default React.memo(Button);
 const styles = StyleSheet.create({
   btn: {
     zIndex: 10,
-    backgroundColor: "#5e185c",
+    backgroundColor: "#0081b8",
     borderRadius: 50,
     paddingHorizontal: 20,
     paddingVertical: 10,
-    width: "100%",
+    width: "90%",
     justifyContent: "center",
     alignItems: "center",
     elevation: 5,
-    marginBottom: 10,
+    marginVertical: 10,
   },
   btnText: {
     fontWeight: "bold",

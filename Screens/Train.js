@@ -8,34 +8,40 @@ import {
   Image,
   FlatList,
   ImageBackground,
+  Modal,
 } from "react-native";
-import React, { useRef, useEffect } from "react";
-import Container from "../Style/Container";
-import { Quiz1 } from "../Quiz/Quiz";
+import React, { useRef, useEffect, useState } from "react";
+import QuizEnd from "../Screens/QuizEnd";
 import { StatusBar } from "expo-status-bar";
+import { Audio } from "expo-av";
+const sound = new Audio.Sound();
 
-const startPoint = (Quiz1.length + 1) * 150;
-console.log(startPoint);
-const Train = () => {
+const Train = (props) => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const fullData = props.route.params;
+  const data = fullData.data;
+  const questionSound = fullData.sound;
+  const startPoint = (data.length + 1) * 100;
   const trainRef = useRef(new Animated.Value(0)).current;
-
+  const blackboardRef = useRef(new Animated.Value(0)).current;
+  const [answerIndex, setAnswerIndex] = useState([]);
+  const [answerLength, setAnswerLength] = useState(0);
   const moveTrain = () => {
     Animated.timing(trainRef, {
       toValue: 1,
-      duration: (Quiz1.length + 1) * 2000,
+      duration: (data.length + 1) * 2000,
       useNativeDriver: true,
-    })
-      // .start(() => {
-      //   Animated.timing(trainRef, {
-      //     toValue: 0,
-      //     duration: 5000,
-      //     useNativeDriver: true,
-      //   })
-      .start(() => {
-        trainRef.setValue(0);
-        moveTrain();
-      });
-    // });
+    }).start(() => {
+      trainRef.setValue(0);
+      moveTrain();
+    });
+  };
+
+  const moveBlackBoard = () => {
+    Animated.spring(blackboardRef, {
+      toValue: 1,
+      useNativeDriver: true,
+    }).start();
   };
 
   const xVal = trainRef.interpolate({
@@ -43,40 +49,80 @@ const Train = () => {
     outputRange: [Dimensions.get("window").width, -startPoint],
   });
 
-  // const ReverseX = trainRef.interpolate({
-  //   inputRange: [0, 1],
-  //   outputRange: [0, Dimensions.get("window").width],
-  // });
-
-  // const yVal = trainRef.interpolate({
-  //   inputRange: [0, 1],
-  //   outputRange: [0, 350],
-  // });
+  const blackBoardVal = blackboardRef.interpolate({
+    inputRange: [0, 1],
+    outputRange: [-150, Dimensions.get("window").width / 2 - 75],
+  });
 
   const animStyle = {
     transform: [
       {
         translateX: xVal,
       },
-      // {
-      //   translateY: yVal,
-      // },
     ],
   };
 
+  const blackBoardMoveStyle = {
+    transform: [
+      {
+        translateX: blackBoardVal,
+      },
+    ],
+  };
+
+  const loadSound = async () => {
+    try {
+      await sound.loadAsync(questionSound);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const playSound = async () => {
+    try {
+      await sound.replayAsync();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
+    loadSound();
     moveTrain();
+    let num = 0;
+    for (let i = 0; i < data.length; i++) {
+      if (data[i] === fullData.answer) {
+        num = num + 1;
+      }
+      setAnswerLength(num);
+    }
+    moveBlackBoard();
   }, []);
 
-  const renderItem = ({ item }) => {
+  const renderItem = ({ item, index }) => {
     return (
       <TouchableOpacity
         style={[styles.trainBox]}
-        onPress={() => {
-          alert(item);
+        onPressIn={() => {
+          if (item === fullData.answer && !answerIndex.includes(index))
+            setAnswerIndex([...answerIndex, index]);
+        }}
+        onPressOut={() => {
+          if (answerIndex.length === answerLength) return setModalVisible(true);
         }}
       >
-        <Text style={styles.text}>{item}</Text>
+        <Text
+          style={[
+            styles.text,
+            {
+              backgroundColor: answerIndex.includes(index)
+                ? "#1c9482"
+                : "#003461",
+            },
+          ]}
+        >
+          {item}
+        </Text>
         <Image
           source={require("../assets/train/cabin.png")}
           style={styles.trainCabin}
@@ -88,39 +134,72 @@ const Train = () => {
   };
 
   return (
-    <View style={[styles.trainContainer]}>
-      <ImageBackground
-        source={require("../assets/grass/grass.png")}
-        resizeMode="cover"
-        style={styles.image}
+    <View style={[styles.trainContainer, { width: startPoint + 100 }]}>
+      <Image
+        resizeMode="contain"
+        source={require("../assets/images/bg.jpg")}
+        style={[StyleSheet.absoluteFillObject]}
+      />
+      <Text style={styles.questionTitle}>
+        မေးခွန်း - {"\t"}"{fullData.question}" ကိုရွေးပါ
+      </Text>
+      <Animated.View
+        style={[styles.train, animStyle, { width: startPoint + 100 }]}
       >
-        <Animated.View style={[styles.train, animStyle]}>
-          <Image
-            source={require("../assets/train/head.png")}
-            style={styles.trainCabin}
-          />
-          <FlatList
-            contentContainerStyle={{
-              alignItems: "center",
-            }}
-            horizontal
-            data={Quiz1}
-            renderItem={renderItem}
-            keyExtractor={(item, index) => index}
-          />
-        </Animated.View>
-      </ImageBackground>
+        <Image
+          source={require("../assets/train/head.png")}
+          style={styles.trainCabin}
+        />
+        <FlatList
+          contentContainerStyle={{
+            alignItems: "center",
+          }}
+          horizontal
+          data={data}
+          renderItem={renderItem}
+          keyExtractor={(item, index) => index}
+        />
+      </Animated.View>
+      <Animated.View style={[blackBoardMoveStyle, styles.blackboardContainer]}>
+        <TouchableOpacity style={styles.blackboard} onPress={playSound}>
+          <ImageBackground
+            style={styles.blackboard}
+            source={require("../assets/images/blackboard.png")}
+          >
+            <Text style={styles.blackboardText}>{fullData.question}</Text>
+          </ImageBackground>
+        </TouchableOpacity>
+      </Animated.View>
       <StatusBar hidden />
+      <Modal
+        transparent
+        statusBarTranslucent
+        style={{ margin: 0, flex: 1 }}
+        visible={modalVisible}
+      >
+        <QuizEnd
+          onPressHome={() => {
+            setModalVisible(false);
+            props.navigation.reset({
+              index: 0,
+              routes: [{ name: "Home" }],
+            });
+          }}
+          onPressNext={() => {
+            setModalVisible(false);
+          }}
+        />
+      </Modal>
     </View>
   );
 };
 
-export default Train;
+export default React.memo(Train);
 
 const styles = StyleSheet.create({
   trainContainer: {
-    width: startPoint + 100,
     flex: 1,
+    justifyContent: "center",
   },
 
   image: {
@@ -129,7 +208,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   train: {
-    width: startPoint + 100,
     flexDirection: "row",
     alignItems: "flex-end",
   },
@@ -137,17 +215,47 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   trainCabin: {
-    width: 150,
-    height: 150,
+    width: 100,
+    height: 100,
   },
   text: {
     textAlign: "center",
     color: "white",
     fontWeight: "bold",
-    fontSize: 60,
-    width: 120,
+    fontSize: 40,
+    width: 80,
     borderRadius: 5,
     backgroundColor: "#003461",
     marginBottom: -30,
+  },
+  questionTitle: {
+    marginBottom: 20,
+    fontWeight: "bold",
+    color: "#fff",
+    fontSize: 30,
+    backgroundColor: "#2b2b2b",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 20,
+    alignSelf: "flex-start",
+    position: "absolute",
+    top: 20,
+    left: 30,
+  },
+  blackboard: {
+    width: 150,
+    height: 100,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  blackboardContainer: {
+    alignSelf: "flex-start",
+    position: "absolute",
+    bottom: 10,
+  },
+  blackboardText: {
+    color: "#fff",
+    fontSize: 50,
+    fontWeight: "bold",
   },
 });

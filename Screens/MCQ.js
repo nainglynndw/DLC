@@ -9,6 +9,6 @@ const MCQ = () => {
   );
 };
 
-export default MCQ;
+export default React.memo(MCQ);
 
 const styles = StyleSheet.create({});
