@@ -55,7 +55,7 @@ const Login = (props) => {
         showAnim();
       }, 500);
       return () => {
-        stopSound();
+        stopSound(music);
         clearTimeout();
       };
     }, [])
