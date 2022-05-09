@@ -9,6 +9,11 @@ import Train from "./Screens/Train";
 import Loading from "./Screens/Loading";
 import Matching from "./Screens/Matching";
 import DnD from "./Screens/DragAndDrop";
+import TeacherDashBoard from "./Screens/TeacherDashBoard";
+import Profile from "./Screens/Profile";
+import MyStudents from "./Screens/MyStudents";
+import AddStudent from "./Screens/AddStudent";
+import EditStudent from "./Screens/EditStudent";
 
 const Stack = createNativeStackNavigator();
 
@@ -17,7 +22,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{ headerShown: false }}
-        initialRouteName="Loading"
+        initialRouteName="Login"
       >
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen
@@ -31,6 +36,11 @@ export default function App() {
         <Stack.Screen name="Loading" component={Loading} />
         <Stack.Screen name="Matching" component={Matching} />
         <Stack.Screen name="DnD" component={DnD} />
+        <Stack.Screen name="TeacherDashBoard" component={TeacherDashBoard} />
+        <Stack.Screen name="Profile" component={Profile} />
+        <Stack.Screen name="MyStudents" component={MyStudents} />
+        <Stack.Screen name="AddStudent" component={AddStudent} />
+        <Stack.Screen name="EditStudent" component={EditStudent} />
       </Stack.Navigator>
     </NavigationContainer>
   );

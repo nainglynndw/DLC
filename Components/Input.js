@@ -4,9 +4,14 @@ import React from "react";
 const Input = (props) => {
   return (
     <TextInput
+      value={props.value}
+      keyboardType={props.keyboardType}
+      secureTextEntry={props.secureTextEntry}
       placeholder={props.placeholder}
       onChangeText={props.onChangeText}
       style={styles.input}
+      onPressIn={props.onPressIn}
+      editable={props.editable}
     />
   );
 };

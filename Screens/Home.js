@@ -4,7 +4,6 @@ import {
   FlatList,
   Text,
   Image,
-  ScrollView,
   StatusBar,
   TouchableOpacity,
   Dimensions,
