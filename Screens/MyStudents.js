@@ -59,7 +59,17 @@ const MyStudents = (props) => {
 
   const studentRenderItem = ({ item }) => {
     return (
-      <View style={styles.rowContainer1}>
+      <View
+        style={[
+          styles.rowContainer1,
+          {
+            backgroundColor: "grey",
+            borderWidth: 1,
+            borderColor: "#fff",
+            paddingRight: 10,
+          },
+        ]}
+      >
         <TouchableOpacity
           style={styles.studentItem}
           onPress={() => {
@@ -212,9 +222,6 @@ const styles = StyleSheet.create({
   studentItem: {
     width: "75%",
     padding: 10,
-    backgroundColor: "#9ea8323f",
-    borderWidth: 1,
-    borderColor: "#fff",
   },
   studentName: {
     fontSize: 12,
