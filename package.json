@@ -30,6 +30,7 @@
     "expo-image-picker": "~11.0.3",
     "expo-status-bar": "~1.1.0",
     "expo-storage": "^44.0.0",
+    "expo-updates": "~0.10.15",
     "firebase": "^9.7.0",
     "lottie-react-native": "4.0.3",
     "react": "17.0.1",

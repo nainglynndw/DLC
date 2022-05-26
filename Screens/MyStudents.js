@@ -19,6 +19,7 @@ import {
   where,
   updateDoc,
   doc,
+  orderBy,
 } from "firebase/firestore/lite";
 import Loading from "../Components/Loading";
 
@@ -33,7 +34,11 @@ const MyStudents = (props) => {
   const [refresh, setRefresh] = useState(false);
 
   const getData = async () => {
-    const q = query(usersCollection, where("teacherId", "==", teacherData.id));
+    const q = query(
+      usersCollection,
+      where("teacherId", "==", teacherData.id),
+      orderBy("createdAt", "desc")
+    );
     const userSnapshot = await getDocs(q);
     const userList = userSnapshot.docs.map((doc) => doc.data());
     setStudents([...userList]);
@@ -63,7 +68,8 @@ const MyStudents = (props) => {
         style={[
           styles.rowContainer1,
           {
-            backgroundColor: "grey",
+            backgroundColor:
+              selectedStudent?.id === item.id ? "#d1db14" : "#f2f78d5f",
             borderWidth: 1,
             borderColor: "#fff",
             paddingRight: 10,
@@ -77,7 +83,17 @@ const MyStudents = (props) => {
           }}
         >
           <Text style={styles.studentName}>{item.name}</Text>
+          <Text style={styles.studentId}>ID - {item.id}</Text>
+          <Text
+            style={[
+              styles.studentActive,
+              { color: item.activated ? "blue" : "red" },
+            ]}
+          >
+            {item.activated ? "Active" : "Not Active"}
+          </Text>
         </TouchableOpacity>
+
         <TouchableOpacity
           style={styles.editBtn}
           onPress={() => {
@@ -113,11 +129,28 @@ const MyStudents = (props) => {
         <View style={styles.half}>
           <Text style={styles.headerText}>My Students</Text>
         </View>
-        <View style={styles.half}></View>
+        <View style={styles.half}>
+          <Text
+            style={[
+              styles.headerText,
+              {
+                color:
+                  students.length === 70
+                    ? "red"
+                    : students.length > 60
+                    ? "yellow"
+                    : "green",
+              },
+            ]}
+          >
+            {students.length}/70
+          </Text>
+        </View>
       </View>
       <View style={styles.rowContainer}>
         <View style={[styles.half]}>
           <FlatList
+            showsVerticalScrollIndicator={false}
             style={{ alignSelf: "flex-start" }}
             data={students}
             renderItem={studentRenderItem}
@@ -125,63 +158,91 @@ const MyStudents = (props) => {
           />
         </View>
         <View style={styles.half}>
-          <ScrollView>
-            <View style={[styles.studentDataBox, styles.rowContainer1]}>
-              <Text style={styles.studentData}>
-                Activated - {selectedStudent?.activated?.toString()}
-              </Text>
-              <TouchableOpacity
-                style={styles.editBtn}
-                onPress={() => {
-                  activate(selectedStudent?.activated ? false : true);
-                }}
-              >
-                <Text style={styles.editText}>
-                  {selectedStudent?.activated ? "Deactivate" : "Activate"}
+          {selectedStudent && (
+            <ScrollView>
+              <View style={[styles.studentDataBox, styles.rowContainer1]}>
+                <Text style={styles.studentDataTitle}>
+                  Activated -{" "}
+                  <Text style={styles.studentData}>
+                    {selectedStudent?.activated?.toString()}
+                  </Text>
                 </Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.studentDataBox}>
-              <Text style={styles.studentData}>
-                Name - {selectedStudent?.name}
-              </Text>
-            </View>
-            <View style={styles.studentDataBox}>
-              <Text style={styles.studentData}>
-                Class - {selectedStudent?.class}
-              </Text>
-            </View>
-            <View style={styles.studentDataBox}>
-              <Text style={styles.studentData}>
-                Date Of Birth -{" "}
-                {selectedStudent?.dateOfBirth.toDate().toDateString()}
-              </Text>
-            </View>
-            <View style={styles.studentDataBox}>
-              <Text style={styles.studentData}>
-                Phone - {selectedStudent?.phone}
-              </Text>
-            </View>
-            <View style={styles.studentDataBox}>
-              <Text style={styles.studentData}>
-                Address - {selectedStudent?.address}
-              </Text>
-            </View>
-            <View style={styles.studentDataBox}>
-              <Text style={styles.studentData}>
-                Created At -{" "}
-                {selectedStudent?.createdAt.toDate().toDateString()}
-              </Text>
-            </View>
-            <View style={styles.studentDataBox}>
-              <Text style={styles.studentData}>ID - {selectedStudent?.id}</Text>
-            </View>
-            <View style={styles.studentDataBox}>
-              <Text style={styles.studentData}>
-                Password - {selectedStudent?.password}
-              </Text>
-            </View>
-          </ScrollView>
+                <TouchableOpacity
+                  style={styles.editBtn}
+                  onPress={() => {
+                    activate(selectedStudent?.activated ? false : true);
+                  }}
+                >
+                  <Text style={styles.editText}>
+                    {selectedStudent?.activated ? "Deactivate" : "Activate"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.studentDataBox}>
+                <Text style={styles.studentDataTitle}>
+                  Name -{" "}
+                  <Text style={styles.studentData}>
+                    {selectedStudent?.name}
+                  </Text>
+                </Text>
+              </View>
+              <View style={styles.studentDataBox}>
+                <Text style={styles.studentDataTitle}>
+                  ID -{" "}
+                  <Text style={styles.studentData}>{selectedStudent?.id}</Text>
+                </Text>
+              </View>
+              <View style={styles.studentDataBox}>
+                <Text style={styles.studentDataTitle}>
+                  Class -{" "}
+                  <Text style={styles.studentData}>
+                    {selectedStudent?.class}
+                  </Text>
+                </Text>
+              </View>
+              <View style={styles.studentDataBox}>
+                <Text style={styles.studentDataTitle}>
+                  Date Of Birth -{" "}
+                  <Text style={styles.studentData}>
+                    {selectedStudent?.dateOfBirth.toDate().toDateString()}
+                  </Text>
+                </Text>
+              </View>
+              <View style={styles.studentDataBox}>
+                <Text style={styles.studentDataTitle}>
+                  Phone -{" "}
+                  <Text style={styles.studentData}>
+                    {selectedStudent?.phone}
+                  </Text>
+                </Text>
+              </View>
+              <View style={styles.studentDataBox}>
+                <Text style={styles.studentDataTitle}>
+                  Address -{" "}
+                  <Text style={styles.studentData}>
+                    {selectedStudent?.address}
+                  </Text>
+                </Text>
+              </View>
+              <View style={styles.studentDataBox}>
+                <Text style={styles.studentDataTitle}>
+                  Created At -{" "}
+                  <Text style={styles.studentData}>
+                    {selectedStudent?.createdAt.toDate().toDateString()}
+                  </Text>
+                </Text>
+              </View>
+
+              <View style={styles.studentDataBox}>
+                <Text style={styles.studentDataTitle}>
+                  Password -{" "}
+                  <Text style={styles.studentData}>
+                    {selectedStudent?.password}
+                  </Text>
+                </Text>
+              </View>
+            </ScrollView>
+          )}
         </View>
       </View>
       {loading && <Loading open={loading} />}
@@ -222,11 +283,29 @@ const styles = StyleSheet.create({
   studentItem: {
     width: "75%",
     padding: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  studentId: {
+    flex: 1,
+    fontWeight: "bold",
+    color: "#000",
+    fontSize: 10,
   },
   studentName: {
+    flex: 1,
     fontSize: 12,
     fontWeight: "bold",
     color: "#000",
+  },
+  studentActive: {
+    flex: 1,
+    fontSize: 12,
+    fontWeight: "bold",
+    paddingHorizontal: 5,
+    paddingVertical: 3,
+    borderRadius: 2,
   },
   studentDataBox: {
     width: layout.width / 2,
@@ -238,14 +317,17 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
     borderWidth: 1,
     marginBottom: 10,
+    borderRadius: 10,
   },
   studentData: {
-    color: "#fff",
+    color: "yellow",
   },
   rowContainer1: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    borderRadius: 10,
+    marginVertical: 3,
   },
   editBtn: {
     padding: 5,
@@ -254,4 +336,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   editText: { fontSize: 10, color: "black" },
+  studentDataTitle: {
+    color: "#fff",
+  },
 });

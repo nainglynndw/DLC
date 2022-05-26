@@ -48,6 +48,7 @@ const AddStudent = (props) => {
   const pickerRef = useRef();
   const [loading, setLoading] = useState(false);
   const usersCollection = collection(db, "student");
+  const [showModal, setShowModal] = useState(false);
 
   const validate = async () => {
     const q = query(usersCollection, where("id", "==", studentInfo.id));
@@ -72,16 +73,34 @@ const AddStudent = (props) => {
       return alert("Error ! \nPassword must be atleast 6 characters .");
     {
       setLoading(true);
-      login();
+      studentAdd();
       return;
     }
   };
 
-  const login = async () => {
+  const studentAdd = async () => {
     await setDoc(doc(db, "student", studentInfo.id), studentInfo, {
       merge: false,
     });
     setLoading(false);
+    setShowModal(true);
+  };
+
+  const Modal = () => {
+    return (
+      <View style={styles.modal}>
+        <Text style={styles.complete}>Complete Adding Student !</Text>
+        <Text
+          style={styles.ok}
+          onPress={() => {
+            setShowModal(false);
+            props.navigation.navigate("MyStudents", teacherData);
+          }}
+        >
+          OK
+        </Text>
+      </View>
+    );
   };
 
   return (
@@ -113,18 +132,21 @@ const AddStudent = (props) => {
       <ScrollView>
         <View style={styles.rowContainer}>
           <View style={styles.half}>
+            <Text style={styles.label}>Name</Text>
             <Input
               placeholder="Name"
               onChangeText={(a) => {
                 setStudentInfo({ ...studentInfo, name: a });
               }}
             />
+            <Text style={styles.label}>Class</Text>
             <Input
               placeholder="Class"
               onChangeText={(a) => {
                 setStudentInfo({ ...studentInfo, class: a });
               }}
             />
+            <Text style={styles.label}>Gender</Text>
             <Input
               value={
                 studentInfo.gender.length === 0 ? null : studentInfo.gender
@@ -134,6 +156,7 @@ const AddStudent = (props) => {
                 pickerRef.current.focus();
               }}
             />
+            <Text style={styles.label}>Address</Text>
             <Input
               placeholder="Address"
               onChangeText={(a) => {
@@ -142,6 +165,7 @@ const AddStudent = (props) => {
             />
           </View>
           <View style={styles.half}>
+            <Text style={styles.label}>Date of Birth</Text>
             <Input
               value={
                 studentInfo.dateOfBirth.getTime() === 1640908800000
@@ -153,6 +177,7 @@ const AddStudent = (props) => {
                 setShowCalendar(true);
               }}
             />
+            <Text style={styles.label}>Phone</Text>
             <Input
               placeholder="Phone"
               keyboardType="numeric"
@@ -160,12 +185,14 @@ const AddStudent = (props) => {
                 setStudentInfo({ ...studentInfo, phone: a });
               }}
             />
+            <Text style={styles.label}>Student ID</Text>
             <Input
               placeholder="Student ID"
               onChangeText={(a) => {
                 setStudentInfo({ ...studentInfo, id: a });
               }}
             />
+            <Text style={styles.label}>Password</Text>
             <Input
               placeholder="Password"
               secureTextEntry={true}
@@ -198,11 +225,13 @@ const AddStudent = (props) => {
           setStudentInfo({ ...studentInfo, gender: itemValue });
         }}
       >
+        <Picker.Item label="" value="" />
         <Picker.Item label="အခြား" value="အခြား" />
         <Picker.Item label="မိန်းကလေး" value="မိန်းကလေး" />
         <Picker.Item label="ယောက်ျားလေး" value="ယောက်ျားလေး" />
       </Picker>
       {loading && <Loading open={loading} />}
+      {showModal && <Modal />}
     </View>
   );
 };
@@ -214,6 +243,7 @@ const styles = StyleSheet.create({
     width: layout.width,
     flex: 1,
     alignItems: "center",
+    justifyContent: "center",
   },
   headerRowContainer: {
     width: "100%",
@@ -235,17 +265,41 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#3064ff",
   },
-  input: {
-    width: "90%",
-    padding: 10,
-    backgroundColor: "#fff",
-    borderBottomWidth: 2,
-    borderBottomColor: "grey",
-    elevation: 5,
-    borderTopLeftRadius: 5,
-    borderTopRightRadius: 5,
+  label: {
+    alignSelf: "flex-start",
     fontWeight: "bold",
-    color: "#0046b88f",
-    marginVertical: 10,
+    marginLeft: "5%",
+    marginTop: 10,
+    marginBottom: -5,
+    color: "blue",
+  },
+  modal: {
+    width: 300,
+    height: 200,
+    justifyContent: "space-evenly",
+    backgroundColor: "#fff",
+    elevation: 5,
+    shadowColor: "black",
+    borderRadius: 10,
+    position: "absolute",
+    alignItems: "center",
+  },
+  complete: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "green",
+  },
+  ok: {
+    paddingHorizontal: 30,
+    paddingVertical: 5,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#0081b8",
+    fontWeight: "bold",
+    fontSize: 25,
+    color: "#fff",
+    borderRadius: 10,
+    elevation: 5,
+    shadowColor: "green",
   },
 });

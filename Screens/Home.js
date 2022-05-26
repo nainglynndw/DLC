@@ -18,7 +18,7 @@ import { useFocusEffect } from "@react-navigation/native";
 
 const Home = (props) => {
   const [flWidth, setFlWidth] = useState(0);
-
+  const data = Quiz;
   const [item, setItem] = useState({});
   const music = require("../assets/Music/home_theme.mp3");
   useFocusEffect(
@@ -30,7 +30,6 @@ const Home = (props) => {
     }, [])
   );
 
-  const data = Quiz;
   const renderItem = ({ item }) => {
     return (
       <TouchableOpacity
@@ -165,7 +164,7 @@ const styles = StyleSheet.create({
     borderRadius: 150,
     justifyContent: "center",
     alignItems: "center",
-    elevation: 8,
+    elevation: 3,
     marginHorizontal: 10,
     backgroundColor: color.yellow,
     borderWidth: 5,

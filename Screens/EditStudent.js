@@ -22,7 +22,7 @@ const layout = Dimensions.get("window");
 
 const EditStudent = (props) => {
   const data = props.route.params;
-  console.log(data);
+
   const [studentInfo, setStudentInfo] = useState({
     ...data,
     dateOfBirth: data.dateOfBirth.toDate(),
@@ -30,6 +30,7 @@ const EditStudent = (props) => {
   const [showCalendar, setShowCalendar] = useState(false);
   const pickerRef = useRef();
   const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const validate = async () => {
     if (studentInfo.name.replace(/\s/g, "").length <= 3)
@@ -57,6 +58,24 @@ const EditStudent = (props) => {
     const studentRef = doc(db, "student", studentInfo.id);
     await updateDoc(studentRef, studentInfo);
     setLoading(false);
+    setShowModal(true);
+  };
+
+  const Modal = () => {
+    return (
+      <View style={styles.modal}>
+        <Text style={styles.complete}>Complete Editing Student !</Text>
+        <Text
+          style={styles.ok}
+          onPress={() => {
+            setShowModal(false);
+            props.navigation.navigate("MyStudents", data);
+          }}
+        >
+          OK
+        </Text>
+      </View>
+    );
   };
 
   return (
@@ -88,6 +107,7 @@ const EditStudent = (props) => {
       <ScrollView>
         <View style={styles.rowContainer}>
           <View style={styles.half}>
+            <Text style={styles.label}>Name</Text>
             <Input
               value={studentInfo.name.length === 0 ? null : studentInfo.name}
               placeholder="Name"
@@ -95,6 +115,7 @@ const EditStudent = (props) => {
                 setStudentInfo({ ...studentInfo, name: a });
               }}
             />
+            <Text style={styles.label}>Class</Text>
             <Input
               value={studentInfo.class.length === 0 ? null : studentInfo.class}
               placeholder="Class"
@@ -102,6 +123,7 @@ const EditStudent = (props) => {
                 setStudentInfo({ ...studentInfo, class: a });
               }}
             />
+            <Text style={styles.label}>Gender</Text>
             <Input
               value={
                 studentInfo.gender.length === 0 ? null : studentInfo.gender
@@ -111,6 +133,7 @@ const EditStudent = (props) => {
                 pickerRef.current.focus();
               }}
             />
+            <Text style={styles.label}>Address</Text>
             <Input
               value={
                 studentInfo.address.length === 0 ? null : studentInfo.address
@@ -122,6 +145,7 @@ const EditStudent = (props) => {
             />
           </View>
           <View style={styles.half}>
+            <Text style={styles.label}>Date Of Birth</Text>
             <Input
               value={
                 studentInfo.dateOfBirth.getTime() === 1640908800000
@@ -133,6 +157,7 @@ const EditStudent = (props) => {
                 setShowCalendar(true);
               }}
             />
+            <Text style={styles.label}>Phone</Text>
             <Input
               value={studentInfo.phone.length === 0 ? null : studentInfo.phone}
               placeholder="Phone"
@@ -141,6 +166,7 @@ const EditStudent = (props) => {
                 setStudentInfo({ ...studentInfo, phone: a });
               }}
             />
+            <Text style={styles.label}>Student ID</Text>
             <Input
               editable={false}
               value={studentInfo.id.length === 0 ? null : studentInfo.id}
@@ -149,6 +175,7 @@ const EditStudent = (props) => {
                 setStudentInfo({ ...studentInfo, id: a });
               }}
             />
+            <Text style={styles.label}>Password</Text>
             <Input
               value={
                 studentInfo.password.length === 0 ? null : studentInfo.password
@@ -189,6 +216,7 @@ const EditStudent = (props) => {
         <Picker.Item label="ယောက်ျားလေး" value="ယောက်ျားလေး" />
       </Picker>
       {loading && <Loading open={loading} />}
+      {showModal && <Modal />}
     </View>
   );
 };
@@ -200,6 +228,7 @@ const styles = StyleSheet.create({
     width: layout.width,
     flex: 1,
     alignItems: "center",
+    justifyContent: "center",
   },
   headerRowContainer: {
     width: "100%",
@@ -221,17 +250,41 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#3064ff",
   },
-  input: {
-    width: "90%",
-    padding: 10,
-    backgroundColor: "#fff",
-    borderBottomWidth: 2,
-    borderBottomColor: "grey",
-    elevation: 5,
-    borderTopLeftRadius: 5,
-    borderTopRightRadius: 5,
+  label: {
+    alignSelf: "flex-start",
     fontWeight: "bold",
-    color: "#0046b88f",
-    marginVertical: 10,
+    marginLeft: "5%",
+    marginTop: 10,
+    marginBottom: -5,
+    color: "blue",
+  },
+  modal: {
+    width: 300,
+    height: 200,
+    justifyContent: "space-evenly",
+    backgroundColor: "#fff",
+    elevation: 5,
+    shadowColor: "black",
+    borderRadius: 10,
+    position: "absolute",
+    alignItems: "center",
+  },
+  complete: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "green",
+  },
+  ok: {
+    paddingHorizontal: 30,
+    paddingVertical: 5,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#0081b8",
+    fontWeight: "bold",
+    fontSize: 25,
+    color: "#fff",
+    borderRadius: 10,
+    elevation: 5,
+    shadowColor: "green",
   },
 });
