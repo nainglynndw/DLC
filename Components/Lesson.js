@@ -7,22 +7,18 @@ const Lesson = (props) => {
     <TouchableOpacity style={styles.btnHeart} onPress={props.onPress}>
       <Text style={[styles.btnTitle]}>{props.type}</Text>
       <LottieView
-        resizeMode="cover"
+        resizeMode="contain"
         autoPlay={true}
         loop
         style={{
           alignItems: "center",
           justifyContent: "center",
           width: 100,
+          maxWidth: 100,
+          maxHeight: 100,
           height: 100,
           margin: 10,
         }}
-        // colorFilters={[
-        //   {
-        //     keypath: "Layer 1",
-        //     color: getRandomColor(),
-        //   },
-        // ]}
         source={props.anim}
       />
       <Text style={styles.btnText}>

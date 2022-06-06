@@ -99,9 +99,9 @@ const Home = (props) => {
         </View>
         <FlatList
           numColumns={4}
+          contentContainerStyle={{ padding: 20 }}
           style={{
             flex: 1,
-            padding: 20,
           }}
           data={data}
           showsVerticalScrollIndicator={true}
@@ -161,15 +161,12 @@ const styles = StyleSheet.create({
   titleContainer: {
     width: 100,
     height: 100,
-    borderRadius: 150,
+    borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
     elevation: 3,
-    marginHorizontal: 10,
     backgroundColor: color.yellow,
-    borderWidth: 5,
-    borderColor: "#ddd",
-    marginVertical: 10,
+    margin: 10,
   },
   title: {
     fontWeight: "bold",
