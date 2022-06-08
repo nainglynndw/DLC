@@ -1,15 +1,22 @@
 import { StyleSheet, View, StatusBar } from "react-native";
 import React, { useEffect } from "react";
 import LottieView from "lottie-react-native";
+import { Storage } from "expo-storage";
 
 const Loading = (props) => {
-  useEffect(() => {
+  const getItem = async () => {
+    const item = JSON.parse(await Storage.getItem({ key: "isIntroFinished" }));
+
     setTimeout(() => {
       props.navigation.reset({
         index: 0,
-        routes: [{ name: "Login" }],
+        routes: [{ name: item ? "Login" : "IntroScreen" }],
       });
     }, 4000);
+  };
+
+  useEffect(() => {
+    getItem();
   }, []);
 
   return (

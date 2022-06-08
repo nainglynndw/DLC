@@ -14,6 +14,7 @@ import Profile from "./Screens/Profile";
 import MyStudents from "./Screens/MyStudents";
 import AddStudent from "./Screens/AddStudent";
 import EditStudent from "./Screens/EditStudent";
+import IntroScreen from "./Screens/IntroScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -22,7 +23,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{ headerShown: false }}
-        initialRouteName="Login"
+        initialRouteName="Loading"
       >
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen
@@ -41,6 +42,7 @@ export default function App() {
         <Stack.Screen name="MyStudents" component={MyStudents} />
         <Stack.Screen name="AddStudent" component={AddStudent} />
         <Stack.Screen name="EditStudent" component={EditStudent} />
+        <Stack.Screen name="IntroScreen" component={IntroScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
