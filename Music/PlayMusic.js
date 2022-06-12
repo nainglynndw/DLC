@@ -15,6 +15,7 @@ const playSound = async (music) => {
 
 const stopSound = async (music) => {
   try {
+    await sound.stopAsync();
     await sound.unloadAsync();
   } catch (error) {
     console.log("stop =" + error);

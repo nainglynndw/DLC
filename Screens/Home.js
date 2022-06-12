@@ -98,8 +98,7 @@ const Home = (props) => {
           <Text style={styles.userName}>10/100</Text>
         </View>
         <FlatList
-          numColumns={4}
-          contentContainerStyle={{ padding: 20 }}
+          numColumns={5}
           style={{
             flex: 1,
           }}
@@ -147,20 +146,10 @@ const styles = StyleSheet.create({
     elevation: 3,
     marginVertical: 10,
   },
-  // lessonContainer: {
-  //   width: "100%",
-  //   flexDirection: "row",
-  //   alignItems: "center",
-  //   justifyContent: "space-between",
-  //   borderBottomColor: "#36829b5f",
-  //   borderBottomWidth: 5,
-  //   borderRadius: 10,
-  //   transform: [{ rotateY: "180deg" }],
-  //   paddingLeft: 20,
-  // },
+
   titleContainer: {
-    width: 100,
-    height: 100,
+    width: 80,
+    height: 80,
     borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
@@ -170,7 +159,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: "bold",
-    fontSize: 50,
+    fontSize: 40,
     color: color.blue,
   },
   lessonModal: {

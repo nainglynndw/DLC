@@ -256,6 +256,22 @@ const Quiz = [
     ],
   },
   {
+    title: "*",
+    data: [
+      {
+        id: 1,
+        name: "****",
+        sub: "၁",
+        type: "Revision",
+        data: {
+          leftData: ["ည", "ဆ", "စ", "ဇ"],
+          rightData: ["စ", "ည", "ဇ", "ဆ"],
+        },
+        anim: require("../assets/Animal/owl.json"),
+      },
+    ],
+  },
+  {
     title: "စ",
     data: [
       {

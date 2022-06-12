@@ -194,7 +194,7 @@ const MyStudents = (props) => {
               </View>
               <View style={styles.studentDataBox}>
                 <Text style={styles.studentDataTitle}>
-                  Class -{" "}
+                  Level -{" "}
                   <Text style={styles.studentData}>
                     {selectedStudent?.class}
                   </Text>

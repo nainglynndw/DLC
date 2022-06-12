@@ -15,6 +15,7 @@ import MyStudents from "./Screens/MyStudents";
 import AddStudent from "./Screens/AddStudent";
 import EditStudent from "./Screens/EditStudent";
 import IntroScreen from "./Screens/IntroScreen";
+import RevisionChoice from "./QuestionTemplates/RevisionChoice";
 
 const Stack = createNativeStackNavigator();
 
@@ -23,7 +24,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{ headerShown: false }}
-        initialRouteName="Loading"
+        initialRouteName="Home"
       >
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen
@@ -43,6 +44,7 @@ export default function App() {
         <Stack.Screen name="AddStudent" component={AddStudent} />
         <Stack.Screen name="EditStudent" component={EditStudent} />
         <Stack.Screen name="IntroScreen" component={IntroScreen} />
+        <Stack.Screen name="Revision" component={RevisionChoice} />
       </Stack.Navigator>
     </NavigationContainer>
   );

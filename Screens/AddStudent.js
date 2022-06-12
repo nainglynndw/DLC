@@ -35,7 +35,7 @@ const AddStudent = (props) => {
     activated: false,
     teacherId: teacherData.id,
     name: "",
-    class: "",
+    level: "",
     address: "",
     phone: "",
     id: "",
@@ -56,8 +56,8 @@ const AddStudent = (props) => {
     const userList = userSnapshot.docs.map((doc) => doc.data());
     if (studentInfo.name.replace(/\s/g, "").length <= 3)
       return alert("Error ! \nName must be atleast 4 characters .");
-    if (studentInfo.class.replace(/\s/g, "").length <= 3)
-      return alert("Error ! \nClass must be atleast 4 characters .");
+    if (studentInfo.level.replace(/\s/g, "").length <= 3)
+      return alert("Error ! \nLevel must be atleast 4 characters .");
     if (studentInfo.address.replace(/\s/g, "").length <= 3)
       return alert("Error ! \nAddress must be atleast 4 characters .");
     if (studentInfo.gender.replace(/\s/g, "").length === 0)
@@ -124,7 +124,7 @@ const AddStudent = (props) => {
           />
         </TouchableOpacity>
         <View style={styles.half}>
-          <Text style={styles.headerText}>Add student to your class</Text>
+          <Text style={styles.headerText}>Add student to your level</Text>
         </View>
         <View style={styles.half}></View>
       </View>
@@ -139,11 +139,11 @@ const AddStudent = (props) => {
                 setStudentInfo({ ...studentInfo, name: a });
               }}
             />
-            <Text style={styles.label}>Class</Text>
+            <Text style={styles.label}>Level</Text>
             <Input
-              placeholder="Class"
+              placeholder="Level"
               onChangeText={(a) => {
-                setStudentInfo({ ...studentInfo, class: a });
+                setStudentInfo({ ...studentInfo, level: a });
               }}
             />
             <Text style={styles.label}>Gender</Text>
@@ -227,8 +227,8 @@ const AddStudent = (props) => {
       >
         <Picker.Item label="" value="" />
         <Picker.Item label="အခြား" value="အခြား" />
-        <Picker.Item label="မိန်းကလေး" value="မိန်းကလေး" />
-        <Picker.Item label="ယောက်ျားလေး" value="ယောက်ျားလေး" />
+        <Picker.Item label="မ" value="မ" />
+        <Picker.Item label="ကျား" value="ကျား" />
       </Picker>
       {loading && <Loading open={loading} />}
       {showModal && <Modal />}

@@ -89,7 +89,7 @@ const Backdrop = ({ scrollX }) => {
   );
 };
 
-const IntroScreen = () => {
+const IntroScreen = (props) => {
   const scrollX = React.useRef(new Animated.Value(0)).current;
 
   const introFinished = async () => {
@@ -97,7 +97,10 @@ const IntroScreen = () => {
       key: "isIntroFinished",
       value: JSON.stringify(true),
     });
-    alert("Intro Finished");
+    props.navigation.reset({
+      index: 0,
+      routes: [{ name: "Loading" }],
+    });
   };
 
   const renderItem = ({ item, index }) => {
